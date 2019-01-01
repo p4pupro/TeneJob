@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  db:
+    image: customimage_mysql
+    restart: always
+    ports:
+    - "3306:3306"
+
+  application:
+    build: .
+    ports:
+    - "9111:9111"
+    depends_on:
+    - db
+    links:
+    - db
+    environment:
+    - database.url=jdbc:jdbc:mysql://db/tenejob
