@@ -1,0 +1,6 @@
+com.api.tenejob
+com.api.tenejob.controller
+com.api.tenejob.exception
+com.api.tenejob.model
+com.api.tenejob.repository
+com.api.tenejob.services
