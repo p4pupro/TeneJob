@@ -17,7 +17,9 @@ public class TeneJobApplication {
 	@RequestMapping("/")
 	@ResponseBody
 	String home() {
-		return "Hello!!  go to: " + " http://localhost:8080/api/matching";
+		return "Hello!!  in locahost deploy go to: "
+				+ "http://localhost:8080/api/matching"
+				+ " http://192.168.1.96:9111/api/matching";
 	}
 
 	public static void main(String[] args) {
