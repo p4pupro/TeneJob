@@ -52,6 +52,8 @@ public class TeneJobController {
         Gson gson = new Gson();
         JsonObject  jsonObject = gson.fromJson(jsonData, JsonObject.class);
         List<Worker> listWorker = matchingService.castingJsonToListWorker(jsonObject);
+        List<Worker> listWorkerMatched = new ArrayList<>();
+        List<Worker> listWorkerOriginal = matchingService.castingJsonToListWorker(jsonObject);
         List<Shift> listShift = matchingService.castingJsonToListShift(jsonObject);
 
         List<Matching> listMatching = new ArrayList<>();
@@ -64,9 +66,11 @@ public class TeneJobController {
             for(int i = 0; i < listShift.size(); i ++) {
                 String day = listShift.get(i).getDay()[0];
                 if(!matchingDays.contains(day)) {
-                    if((listWorker.stream()
+                    if(((listWorker.stream()
                             .filter(worker -> Arrays.stream(worker.getAvailability()).anyMatch(day::equals))
-                            .count()) == 1) {
+                            .count()) == 1) || ((listWorker.stream()
+                            .filter(worker -> Arrays.stream(worker.getAvailability()).anyMatch(day::equals))
+                            .count()) == 2)) {
 
                         // Looking worker and shift:
                         Optional<Worker> work = listWorker.stream().filter(worker -> Arrays.stream(worker.getAvailability()).anyMatch(day::equals)).findFirst();
@@ -78,28 +82,32 @@ public class TeneJobController {
                         matching.setWorker(work.get());
                         matching.setShift(shif.get());
                         listMatching.add(matching);
+                        logger.debug("worker matched in shift");
+
+                        // List workers matched
+                        listWorkerMatched.add(work.get());
 
                         // Add the day from the array of availability days:
                         matchingDays.add(day);
 
                         // Remove the worker that has been assigned to the optimal shift:
                         listWorker.remove(work.get());
-                    } else if((listWorker.stream()
-                            .filter(worker -> Arrays.stream(worker.getAvailability()).anyMatch(day::equals))
-                            .count()) > 1) {
-                        logger.debug("I'm sorry, but the algorithm doesn't make magic, only one worker can be assigned to a shift.");
+                        logger.debug("matched worker with id: " + work.get().getId() + " - removed from the list workers");
                     }
                 }
             }
 
         } while(true);
 
+        // Check workers without shift
+        matchingService.checkWorkerWithoutShift(listWorkerOriginal, listWorkerMatched);
+
         return listMatching;
     }
 
     /**
      * @Author: Domingo Pérez
-     * Similar to another, but this case without post request
+     * Similar to another, but this case try request GET method
      * json is given to path.
      *
      */
@@ -141,15 +149,14 @@ public class TeneJobController {
 
                                 // Remove the worker that has been assigned to the optimal shift:
                                 listWorker.remove(work.get());
-                            } else if((listWorker.stream()
-                            .filter(worker -> Arrays.stream(worker.getAvailability()).anyMatch(day::equals))
-                            .count()) > 1) {
-                                logger.debug("I'm sorry, but the algorithm doesn't make magic, only one worker can be assigned to a shift.");
                             }
                 }
             }
 
         } while(true);
+
+         // Check workers without shift
+        matchingService.checkWorkerWithoutShift(listWorkerOriginal, listMatching);
 
         return listMatching;
     }

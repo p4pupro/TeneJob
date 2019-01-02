@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by p4pupro on 20/12/2018.
@@ -93,5 +94,22 @@ public class Matching {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Matching matching = (Matching) o;
+        return Objects.equals(id, matching.id) &&
+                Objects.equals(worker, matching.worker) &&
+                Objects.equals(shift, matching.shift) &&
+                Objects.equals(createdAt, matching.createdAt) &&
+                Objects.equals(updatedAt, matching.updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, worker, shift, createdAt, updatedAt);
     }
 }

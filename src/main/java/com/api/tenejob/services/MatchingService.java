@@ -1,10 +1,13 @@
 package com.api.tenejob.services;
 
+
 import com.api.tenejob.model.Shift;
 import com.api.tenejob.model.Worker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,7 +24,12 @@ import com.google.gson.reflect.TypeToken;
 @Service
 public class MatchingService  {
 
+    private static final Logger logger = LoggerFactory.getLogger(MatchingService.class);
 
+    /**
+     * Just use in case you want try request GET method.
+     * @return
+     */
     public JsonObject getInputJson () {
 
         JsonObject jsonObject = null;
@@ -47,6 +55,11 @@ public class MatchingService  {
         return jsonObject;
     }
 
+    /**
+     * Casting jsonObject to listWorker
+     * @param jsonObject
+     * @return
+     */
     public List<Worker> castingJsonToListWorker (JsonObject jsonObject) {
         Gson gson = new Gson();
         JsonArray objArray = jsonObject.getAsJsonArray("workers");
@@ -56,6 +69,11 @@ public class MatchingService  {
         return listWorker;
     }
 
+    /**
+     * Casting jsonObject to listShift
+     * @param jsonObject
+     * @return
+     */
     public List<Shift> castingJsonToListShift (JsonObject jsonObject) {
         Gson gson = new Gson();
         JsonArray objArray = jsonObject.getAsJsonArray("shifts");
@@ -64,4 +82,24 @@ public class MatchingService  {
 
         return listShift;
     }
+
+
+    /**
+     * @Author Domingo Pérez
+     * Removes from the list of workers those on the matching list and
+     * leaves a log message of those workers who have not been matched
+     * @param listWorkerOriginal
+     * @param listWorkerMatched
+     */
+    public void checkWorkerWithoutShift (List<Worker> listWorkerOriginal, List<Worker> listWorkerMatched) {
+        for (Worker matchingWorkers : listWorkerMatched) {
+            listWorkerOriginal.remove(matchingWorkers);
+        }
+        listWorkerOriginal.forEach( worker -> {
+                                        logger.info("This worker with id: " + worker.getId() + " - could not be assigned, only one worker can be assigned to a shift.");
+                                        logger.info("Worker details: " + worker.toString());
+                                    });
+        logger.debug("I'm sorry, but the algorithm doesn't make magic.");
+    }
+
 }

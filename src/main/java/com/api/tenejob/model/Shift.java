@@ -6,9 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by p4pupro on 20/12/2018.
@@ -72,6 +70,31 @@ public class Shift {
         this.updatedAt = updatedAt;
     }
 
+    @Override
+    public String toString() {
+        return "Shift{" +
+                "id=" + id +
+                ", day=" + Arrays.toString(day) +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Shift shift = (Shift) o;
+        return Objects.equals(id, shift.id) &&
+                Arrays.equals(day, shift.day) &&
+                Objects.equals(createdAt, shift.createdAt) &&
+                Objects.equals(updatedAt, shift.updatedAt);
+    }
 
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, createdAt, updatedAt);
+        result = 31 * result + Arrays.hashCode(day);
+        return result;
+    }
 }
