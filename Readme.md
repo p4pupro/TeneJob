@@ -20,16 +20,16 @@ Build Restful API using Spring Boot, Mysql, JPA and Hibernate.
 git clone https://github.com/p4pupro/spring-boot-mysql-rest-api.git
 ```
 
-**2. Create Mysql database**
+**2. Create Mysql database - execute tenejob.sql in /mySqldb directory, or then**
 ```bash
 create database tenejob
 ```
 
-**3. Change mysql username and password as per your installation**
+**3. Configure mysql url**
 
 + open `src/main/resources/application.properties`
 
-+ change `spring.datasource.username` and `spring.datasource.password` as per your mysql installation
++ comment or uncomment `spring.datasource.url` to local or docker deploy
 
 **4. Build and run the app using maven**
 
@@ -44,16 +44,24 @@ Alternatively, you can run the app without packaging it using -
 mvn spring-boot:run
 ```
 
-The app will start running at <http://localhost:8080/api/matching>.
+The app will start running at <http://localhost:9111/api/matching>.
 
 
 ## Deploying in Docker
-Open the docker terminal, go to the Docker/CustomImage directory and execute the following command:
+
+**1. Configure mysql url**
+
++ open `src/main/resources/application.properties`
+
++ comment or uncomment `spring.datasource.url` to local or docker deploy
+
+**2. Build mySql docker image**
++ Open the docker terminal, go to the Docker/CustomImage directory and execute the following command:
 ```bash
 docker-compose build
 ```
-
-Then Now, open the docker terminal, go to your project’s root directory location, build your maven project with the following command:
+**3. Build tenejob docker image**
+ + Then Now, open the docker terminal, go to your project’s root directory location, build your maven project with the following command:
 ```bash
 docker-compose build
 ```
@@ -62,13 +70,14 @@ and finally
 docker-compose up
 ```
 
-Now the application is up and running. Open the browser and type this URL: http://<ip_address>:<port_number_of application>
-Example: <http://192.168.99.100:9111/api/matching>
+ + Now the application is up and running. Open the browser and type this URL: http://<ip_address>:<port_number_of application>
++ Example: <http://192.168.99.100:9111/api/matching>
 
 ## Explore Rest API
 
 The app defines following  APIs.
 
-    POST /api/matching
+    GET /api/matching - "disable"
+    POST /api/matching  - "working"
     
 You can test them using postman or my own react client.
